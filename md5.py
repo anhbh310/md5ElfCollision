@@ -1,15 +1,4 @@
 #!/usr/bin/env python3
-
-"""An implementation of MD5 that exposes internals and is directly built up
-from mathematical primitives from the MD5 specification.
-
-It achieves about 500KB/s, or 1/1000x of GNU md5sum.
-Thus, this is not an implementation great for larges amounts of hashing.
-Instead, the point is access to internals."""
-
-__date__ = '2015-07-02'
-__version__ = 0.8
-
 import math
 import binascii
 
@@ -23,28 +12,28 @@ int_to_bin = lambda x: words_to_bin(map(int_to_word, x))
 mod32bit = lambda x: x % 2 ** 32
 rotleft = lambda x, n: (x << n) | (x >> (32 - n))
 
-# initial state
+# Trạng thái ban đầu
 IHV0_HEX = '0123456789abcdeffedcba9876543210'
 IHV0 = bin_to_int(binascii.unhexlify(IHV0_HEX.encode()))
 
-# parameters
+# Hằng số
 BLOCK_SIZE = 64  # 512 bits (64 bytes)
 ROUNDS = BLOCK_SIZE
 
-# addition constants
+# hằng số tại mỗi bước
 AC = [int(2 ** 32 * abs(math.sin(t + 1))) for t in range(ROUNDS)]
 
-# rotation constants
+# hằng số xoay bit
 RC = [7, 12, 17, 22] * 4 + [5, 9, 14, 20] * 4 + [4, 11, 16, 23] * 4 + [6, 10, 15, 21] * 4
 
-# non-linear functions
+# hàm phi tuyến
 F = lambda x, y, z: (x & y) ^ (~x & z)
 G = lambda x, y, z: (z & x) ^ (~z & y)
 H = lambda x, y, z: x ^ y ^ z
 I = lambda x, y, z: y ^ (x | ~z)
 Fx = [F] * 16 + [G] * 16 + [H] * 16 + [I] * 16
 
-# data selection
+# tách dữ liệu
 M1 = lambda t: t
 M2 = lambda t: (1 + 5 * t) % 16
 M3 = lambda t: (5 + 3 * t) % 16
@@ -52,7 +41,7 @@ M4 = lambda t: (7 * t) % 16
 Mx = [M1] * 16 + [M2] * 16 + [M3] * 16 + [M4] * 16
 Wx = [mxi(i) for i, mxi in enumerate(Mx)]
 
-# iterations and function composition
+# Vòng lặp xử lý chính
 RoundQNext = lambda w, q, i: mod32bit(
     q[0] + rotleft(mod32bit(Fx[i](q[0], q[1], q[2]) + q[3] + AC[i] + w[Wx[i]]), RC[i]))
 DoRounds = lambda w, q, i: DoRounds(w, [RoundQNext(w, q, i)] + q[:3], i + 1) if (i < ROUNDS) else q
