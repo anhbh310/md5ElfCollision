@@ -2,7 +2,7 @@
 import math
 import binascii
 
-# util
+# Hàm công cụ
 bin_to_words = lambda x: [x[4 * i:4 * (i + 1)] for i in range(len(x) // 4)]
 words_to_bin = lambda x: b''.join(x)
 word_to_int = lambda x: int.from_bytes(x, 'little')
@@ -20,20 +20,20 @@ IHV0 = bin_to_int(binascii.unhexlify(IHV0_HEX.encode()))
 BLOCK_SIZE = 64  # 512 bits (64 bytes)
 ROUNDS = BLOCK_SIZE
 
-# hằng số tại mỗi bước
+# Hằng số tại mỗi bước
 AC = [int(2 ** 32 * abs(math.sin(t + 1))) for t in range(ROUNDS)]
 
-# hằng số xoay bit
+# Hằng số xoay bit
 RC = [7, 12, 17, 22] * 4 + [5, 9, 14, 20] * 4 + [4, 11, 16, 23] * 4 + [6, 10, 15, 21] * 4
 
-# hàm phi tuyến
+# Hàm phi tuyến
 F = lambda x, y, z: (x & y) ^ (~x & z)
 G = lambda x, y, z: (z & x) ^ (~z & y)
 H = lambda x, y, z: x ^ y ^ z
 I = lambda x, y, z: y ^ (x | ~z)
 Fx = [F] * 16 + [G] * 16 + [H] * 16 + [I] * 16
 
-# tách dữ liệu
+# Tách dữ liệu
 M1 = lambda t: t
 M2 = lambda t: (1 + 5 * t) % 16
 M3 = lambda t: (5 + 3 * t) % 16
