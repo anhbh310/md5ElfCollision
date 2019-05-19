@@ -2,12 +2,12 @@ import md5
 import binascii
 import os
 
-
+#Xây dựng chương trình thử nghiệm
 def buildElfFile():
     elfName = "elfFile"
     os.system("gcc c_demo.c -o {}".format(elfName))
 
-
+#Xây dựng hai chương trình xung đột
 def createCollision(prefix, middle, suffix, b0, b1):
     with open("goodFile", "wb") as fgood:
         fgood.write(prefix + b1 + middle + b1 + suffix)
@@ -19,7 +19,7 @@ def createCollision(prefix, middle, suffix, b0, b1):
 
     os.system("chmod +x goodFile evilFile")
 
-
+#Sinh hai khối dữ liệu xung đột
 def createCollisionBlock(prefix):
     digester = md5.MD5()
     digester.update(prefix)
